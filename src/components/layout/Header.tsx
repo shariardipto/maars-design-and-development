@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import FullscreenMenu from "./FullscreenMenu";
 
 export default function Header() {
@@ -18,25 +20,32 @@ export default function Header() {
         }}
       >
         <div
-          className="mddl-container"
           style={{
-            height: "100px",
+            height: "110px",
+            width: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            paddingLeft: "7vw",
+            paddingRight: "6.5vw",
           }}
         >
-          <a href="https://img.magnific.com/free-photo/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg?semt=ais_hybrid&w=740&q=80">
-            <strong
+          {/* LOGO */}
+          <Link href="/">
+            <Image
+              src="/branding/logo.png"
+              alt="MDDL Logo"
+              width={150}
+              height={60}
+              priority
               style={{
-                fontSize: "26px",
-                letterSpacing: "6px",
+                width: "150px",
+                height: "auto",
               }}
-            >
-              MDDL
-            </strong>
-          </a>
+            />
+          </Link>
 
+          {/* RIGHT SIDE */}
           <div
             style={{
               display: "flex",
@@ -48,11 +57,14 @@ export default function Header() {
               href="tel:+880000000000"
               style={{
                 fontSize: "12px",
+                color: "#161616",
+                textDecoration: "none",
               }}
             >
               CALL US
             </a>
 
+            {/* MENU BUTTON */}
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
@@ -64,6 +76,11 @@ export default function Header() {
                 background: "transparent",
                 cursor: "pointer",
                 padding: 0,
+
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "flex-end",
               }}
             >
               <span

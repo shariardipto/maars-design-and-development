@@ -54,7 +54,7 @@ export default function FullscreenMenu({
           position: "relative",
           minHeight: "100vh",
           background:
-            "linear-gradient(rgba(0,0,0,.18), rgba(0,0,0,.18)), url('/images/menu/menu-bg.webp') center/cover no-repeat",
+            "linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('/images/home/2024_10_05_11_10_IMG_2112.JPG') center/cover no-repeat",
         }}
       />
 
