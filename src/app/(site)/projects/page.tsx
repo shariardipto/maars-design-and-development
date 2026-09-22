@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageBanner from "@/components/layout/PageBanner";
 import ProjectGrid from "@/components/projects/ProjectGrid";
 import ContactCTA from "@/components/home/ContactCTA";
-import { projects } from "@/lib/projects";
+import { listProjects } from "@/lib/server/repository";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -16,12 +16,12 @@ export default function ProjectsPage() {
 
       <section className="bg-white py-[110px]">
         <div className="mddl-container">
-          <p className="mb-16 max-w-[560px] text-[13px] leading-[1.9] text-[#777]">
+          <p className="mb-16 max-w-[560px] text-[13px] leading-[1.9] text-[#7a7a7a]">
             A selection of residential architecture and interior design work, spanning full
             builds, renovations and standalone interiors.
           </p>
 
-          <ProjectGrid projects={projects} />
+          <ProjectGrid projects={listProjects()} />
         </div>
       </section>
 

@@ -6,7 +6,18 @@ import { tokenHash } from "@/lib/server/auth";
 import { getConfig } from "@/lib/server/repository";
 import { generateReply, type ChatMessage } from "@/lib/server/integrations";
 import { clientKey, failure, HttpError, json, rateLimit, readBody, sameOrigin } from "@/lib/server/http";
+import { acquireLock } from "@/lib/server/locks";
+export async function GET() {
+  try {
+    if (!getConfig("settings").chatEnabled) return json({ messages: [] });
+    const token = (await cookies()).get("mddl_chat")?.value;
+    if (!token || !/^[a-f0-9]{64}$/.test(token)) return json({ messages: [] });
+    const row = db().prepare("SELECT messages FROM conversations WHERE id=? AND channel='web'").get(tokenHash(token)) as { messages: string } | undefined;
+    return json({ messages: row ? JSON.parse(row.messages) : [] });
+  } catch (error) { return failure(error); }
+}
 export async function POST(request: Request) {
+  let release: (() => void) | undefined;
   try {
     sameOrigin(request);
     if (!getConfig("settings").chatEnabled) throw new HttpError(503,"The assistant is currently unavailable. Please use the contact form.");
@@ -16,7 +27,7 @@ export async function POST(request: Request) {
     const token = existingToken && /^[a-f0-9]{64}$/.test(existingToken) ? existingToken : randomBytes(32).toString("hex");
     const id = tokenHash(token);
     // Prevent overlapping requests on the same conversation from overwriting history.
-    rateLimit(`chat-lock:${id}`, 1, 3000);
+    release = acquireLock(`chat:${id}`);
     const row = db().prepare("SELECT messages FROM conversations WHERE id=? AND channel='web'").get(id) as { messages: string } | undefined;
     const history: ChatMessage[] = row ? JSON.parse(row.messages) : [];
     if (history.length >= 40) throw new HttpError(429,"This conversation has reached its limit. Please contact the studio.");
@@ -27,4 +38,5 @@ export async function POST(request: Request) {
     response.headers.set("Set-Cookie", `mddl_chat=${token}; HttpOnly; SameSite=Lax; Path=/api/chat; Max-Age=86400${process.env.NODE_ENV === "production" ? "; Secure" : ""}`);
     return response;
   } catch (error) { return failure(error); }
+  finally { release?.(); }
 }

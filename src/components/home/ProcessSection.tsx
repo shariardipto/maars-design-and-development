@@ -1,51 +1,8 @@
-const steps = [
-  {
-    number: "01",
-    title: "Client Needs",
-    description:
-      "We start by listening — understanding how you live, work and move through a space before a single line is drawn.",
-  },
-  {
-    number: "02",
-    title: "Planning Design",
-    description:
-      "Concepts are developed into detailed plans, balancing light, material and layout against budget and site constraints.",
-  },
-  {
-    number: "03",
-    title: "Architect Sketch",
-    description:
-      "Refined drawings and 3D visualizations bring the design to life, ready to guide construction from start to finish.",
-  },
-];
-
-export default function ProcessSection() {
-  return (
-    <section className="bg-white py-[110px]">
-      <div className="mddl-container">
-        <div className="mb-16 max-w-[520px]">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="h-[5px] w-[5px] bg-[#ff7844]" />
-            <span className="text-[10px] uppercase tracking-[0.08em] text-[#777]">
-              How We Work
-            </span>
-          </div>
-
-          <h2 className="text-[36px] font-bold leading-[1.1] tracking-[-1px] md:text-[42px]">
-            Our process
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-10">
-          {steps.map((step) => (
-            <div key={step.number} className="border-t border-[#e5e5e5] pt-8">
-              <span className="text-[15px] font-semibold text-[#ff7844]">{step.number}</span>
-              <h3 className="mt-4 text-[22px] font-semibold text-[#161616]">{step.title}</h3>
-              <p className="mt-4 text-[13px] leading-[1.9] text-[#777]">{step.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+import Image from "next/image";
+import type { SiteContent } from "@/lib/config";
+export default function ProcessSection({ content }: { content: SiteContent }) {
+  return <section className="studio-section process-section"><div className="outline-word" aria-hidden="true">Our process</div><div className="mddl-container process-grid">
+    <div className="process-visual" data-reveal="image"><Image src={content.processImage} alt="Architectural detail and natural light" fill sizes="(max-width: 767px) 90vw, 42vw" className="object-cover" /></div>
+    <div className="process-content"><div className="section-copy" data-reveal><p className="eyebrow">Our process</p><h2>{content.processTitle}</h2><div className="short-rule" /><p>{content.processDescription}</p></div><div className="process-cards">{content.steps.map((step,index) => <article key={index} data-reveal><span>{String(index+1).padStart(2,"0")}</span><h3>{step.title}</h3><p>{step.description}</p></article>)}</div></div>
+  </div></section>;
 }

@@ -10,13 +10,15 @@ let database: DatabaseSync | undefined;
 export function db() {
   if (database) return database;
   const filename = process.env.DATABASE_PATH || path.join(process.cwd(), "data", "mddl.sqlite");
-  mkdirSync(path.dirname(path.resolve(filename)), { recursive: true });
+  mkdirSync(path.dirname(path.resolve(/* turbopackIgnore: true */ filename)), { recursive: true });
   const connection = new DatabaseSync(filename);
   connection.exec("PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;");
   connection.exec("CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
   if (!connection.prepare("SELECT version FROM migrations WHERE version=1").get()) {
     connection.exec("BEGIN IMMEDIATE");
     try {
+      // Another worker may have completed initialization while this worker waited.
+      if (!connection.prepare("SELECT version FROM migrations WHERE version=1").get()) {
       connection.exec(`
         CREATE TABLE roles (name TEXT PRIMARY KEY, permissions TEXT NOT NULL);
         CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE COLLATE NOCASE, password_hash TEXT NOT NULL, role TEXT NOT NULL REFERENCES roles(name), active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
@@ -37,9 +39,17 @@ export function db() {
       Object.entries({ settings: defaultSettings, content: defaultContent, integrations: defaultIntegrations }).forEach(([key, value]) => insertConfig.run(key, JSON.stringify(value)));
       const insertProject = connection.prepare("INSERT INTO projects(id,slug,title,category,cover,gallery,location,year,description,status,featured,sort_order) VALUES (?,?,?,?,?,?,?,?,?,'published',?,?)");
       projects.forEach((p, i) => insertProject.run(randomUUID(), p.slug, p.title, p.category, p.cover, JSON.stringify(p.gallery), p.location, p.year, p.description, i < 6 ? 1 : 0, i));
+      }
       connection.exec("COMMIT");
     } catch (error) { connection.exec("ROLLBACK"); connection.close(); throw error; }
   }
+  connection.exec("BEGIN IMMEDIATE");
+  try {
+    if (!connection.prepare("SELECT version FROM migrations WHERE version=2").get()) {
+      connection.exec("CREATE TABLE request_locks (key TEXT PRIMARY KEY, token TEXT NOT NULL, expires_at INTEGER NOT NULL); INSERT INTO migrations(version) VALUES(2);");
+    }
+    connection.exec("COMMIT");
+  } catch (error) { connection.exec("ROLLBACK"); connection.close(); throw error; }
   database = connection;
   return connection;
 }

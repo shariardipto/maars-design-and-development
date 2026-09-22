@@ -10,6 +10,7 @@ import { hashPassword } from "./password";
 import { contentSchema, integrationSchema, passwordSchema, projectSchema, roleSchema, settingsSchema, userSchema } from "../validation";
 import type { Permission } from "../permissions";
 import { integrationStatus, testIntegration } from "./integrations";
+import { assertCanManageUser } from "./user-policy";
 
 const access: Record<string, Permission> = { dashboard: "dashboard.read", projects: "projects.read", settings: "settings.write", content: "content.write", integrations: "integrations.read", users: "users.read", roles: "roles.write", enquiries: "enquiries.read", conversations: "integrations.read", audit: "audit.read", media: "projects.read" };
 export async function adminRead(resource: string) {
@@ -23,11 +24,13 @@ export async function adminRead(resource: string) {
   if (resource === "projects") return listProjects(true);
   if (resource === "settings" || resource === "content") return getConfig(resource);
   if (resource === "integrations") return { ...getConfig("integrations"), status: integrationStatus() };
-  if (resource === "users") return db().prepare("SELECT id,name,email,role,active,created_at FROM users ORDER BY created_at DESC").all();
+  // node:sqlite rows aren't plain objects, so spread them before returning —
+  // otherwise passing them as props into a Client Component (e.g. EnquiriesTable) throws.
+  if (resource === "users") return db().prepare("SELECT id,name,email,role,active,created_at FROM users ORDER BY created_at DESC").all().map((r) => ({ ...r }));
   if (resource === "roles") return db().prepare("SELECT * FROM roles").all().map((r) => ({ ...r, permissions: JSON.parse(r.permissions as string) }));
-  if (resource === "enquiries") return db().prepare("SELECT * FROM enquiries ORDER BY created_at DESC LIMIT 500").all();
+  if (resource === "enquiries") return db().prepare("SELECT * FROM enquiries ORDER BY created_at DESC LIMIT 500").all().map((r) => ({ ...r }));
   if (resource === "conversations") return db().prepare("SELECT * FROM conversations ORDER BY created_at DESC LIMIT 100").all().map((r) => ({ ...r, messages: JSON.parse(r.messages as string) }));
-  if (resource === "audit") return db().prepare("SELECT a.*,coalesce(u.name,a.actor) actor_name FROM audit a LEFT JOIN users u ON u.id=a.actor ORDER BY a.id DESC LIMIT 200").all();
+  if (resource === "audit") return db().prepare("SELECT a.*,coalesce(u.name,a.actor) actor_name FROM audit a LEFT JOIN users u ON u.id=a.actor ORDER BY a.id DESC LIMIT 200").all().map((r) => ({ ...r }));
   if (resource === "media") return readdirSync(path.join(process.cwd(), "public/images"), { recursive: true }).filter((p) => /\.(jpg|jpeg|png|webp|avif)$/i.test(String(p))).map((p) => `/images/${String(p).replaceAll("\\", "/")}`);
 }
 export async function adminWrite(resource: string, id: string | undefined, body: unknown) {
@@ -58,6 +61,8 @@ export async function adminWrite(resource: string, id: string | undefined, body:
     // Only administrators may create, edit or assign administrators, even with delegated user management.
     const existing = id ? db().prepare("SELECT role FROM users WHERE id=?").get(id) as { role: string } | undefined : undefined;
     if ((value.role === "admin" || existing?.role === "admin") && actor.role !== "admin") throw new HttpError(403, "Only administrators can manage administrators.");
+    const rolePermissions = (role: string) => JSON.parse((db().prepare("SELECT permissions FROM roles WHERE name=?").get(role) as { permissions: string }).permissions) as Permission[];
+    assertCanManageUser(actor, existing ? rolePermissions(existing.role) : [], rolePermissions(value.role), value.role === "admin" || existing?.role === "admin");
     const password = value.password ? await hashPassword(value.password) : undefined;
     if (!id && !password) passwordSchema.parse("");
     const userId = id || randomUUID();
@@ -65,7 +70,9 @@ export async function adminWrite(resource: string, id: string | undefined, body:
       if (id) {
         if (!existing) throw new HttpError(404, "User not found.");
         if (id === actor.id && (!value.active || value.role !== actor.role)) throw new HttpError(400, "You cannot disable yourself or change your own role.");
-        if (existing.role === "admin" && (!value.active || value.role !== "admin")) {
+        const current = db().prepare("SELECT role FROM users WHERE id=?").get(id) as { role: string };
+        assertCanManageUser(actor, rolePermissions(current.role), rolePermissions(value.role), current.role === "admin" || value.role === "admin");
+        if (current.role === "admin" && (!value.active || value.role !== "admin")) {
           const others = db().prepare("SELECT count(*) n FROM users WHERE role='admin' AND active=1 AND id<>?").get(id) as { n: number };
           if (!others.n) throw new HttpError(400, "Keep at least one active administrator.");
         }

@@ -6,7 +6,7 @@ export default function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group relative block aspect-[4/5] overflow-hidden bg-[#161616]"
+      className="group relative block aspect-[4/5] overflow-hidden bg-[#191919]"
     >
       <Image
         src={project.cover}
@@ -19,7 +19,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 p-6">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#ff7844]">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#ff7e44]">
           {project.category}
         </span>
         <h3 className="mt-2 text-[19px] font-semibold leading-tight text-white">

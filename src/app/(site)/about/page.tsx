@@ -53,22 +53,22 @@ export default function AboutPage() {
 
           <div>
             <div className="mb-4 flex items-center gap-2">
-              <span className="h-[5px] w-[5px] bg-[#ff7844]" />
-              <span className="text-[10px] uppercase tracking-[0.08em] text-[#777]">
+              <span className="h-[5px] w-[5px] bg-[#ff7e44]" />
+              <span className="text-[10px] uppercase tracking-[0.08em] text-[#7a7a7a]">
                 Who We Are
               </span>
             </div>
 
-            <h2 className="max-w-[420px] text-[32px] font-bold leading-[1.1] tracking-[-1px] md:text-[40px]">
+            <h2 className="max-w-[420px] text-[38px] font-bold leading-[1.05] tracking-[-1.5px] md:text-[50px]">
               We design & build interiors that people actually live in
             </h2>
 
-            <p className="mt-6 max-w-[440px] text-[13px] leading-[1.9] text-[#777]">
+            <p className="mt-6 max-w-[440px] text-[13px] leading-[1.9] text-[#7a7a7a]">
               MDDL is a small studio of architects, interior designers and builders who believe
               good design is measured by how a space is used, not just how it photographs.
             </p>
 
-            <p className="mt-4 max-w-[440px] text-[13px] leading-[1.9] text-[#777]">
+            <p className="mt-4 max-w-[440px] text-[13px] leading-[1.9] text-[#7a7a7a]">
               We work across residential and light commercial projects, staying involved from
               the first sketch through to the final coat of paint.
             </p>
@@ -81,13 +81,13 @@ export default function AboutPage() {
         <div className="mddl-container">
           <div className="mb-16 max-w-[520px]">
             <div className="mb-4 flex items-center gap-2">
-              <span className="h-[5px] w-[5px] bg-[#ff7844]" />
-              <span className="text-[10px] uppercase tracking-[0.08em] text-[#777]">
+              <span className="h-[5px] w-[5px] bg-[#ff7e44]" />
+              <span className="text-[10px] uppercase tracking-[0.08em] text-[#7a7a7a]">
                 Our Team
               </span>
             </div>
 
-            <h2 className="text-[36px] font-bold leading-[1.1] tracking-[-1px] md:text-[42px]">
+            <h2 className="text-[42px] font-bold leading-[1.05] tracking-[-1.5px] md:text-[58px]">
               Meet the people behind MDDL
             </h2>
           </div>
@@ -95,11 +95,11 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
             {team.map((member) => (
               <div key={member.name} className="text-center">
-                <div className="mx-auto flex h-[84px] w-[84px] items-center justify-center rounded-full bg-[#161616] text-[20px] font-semibold text-white">
+                <div className="mx-auto flex h-[84px] w-[84px] items-center justify-center rounded-full bg-[#191919] text-[20px] font-semibold text-white">
                   {initials(member.name)}
                 </div>
 
-                <div className="mt-4 text-[14px] font-semibold text-[#161616]">
+                <div className="mt-4 text-[14px] font-semibold text-[#191919]">
                   {member.name}
                 </div>
                 <div className="text-[12px] text-[#888]">{member.role}</div>
@@ -110,11 +110,11 @@ export default function AboutPage() {
       </section>
 
       {/* STATS */}
-      <section className="bg-[#161616] py-[90px] text-white">
+      <section className="bg-[#191919] py-[90px] text-white">
         <div className="mddl-container grid grid-cols-2 gap-10 md:grid-cols-4">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-[36px] font-bold text-[#ff7844] md:text-[44px]">
+              <div className="text-[36px] font-bold text-[#ff7e44] md:text-[44px]">
                 {stat.value}
               </div>
               <div className="mt-2 text-[12px] uppercase tracking-[0.08em] text-white/60">
@@ -130,17 +130,17 @@ export default function AboutPage() {
         <div className="mddl-container grid grid-cols-1 items-center gap-16 md:grid-cols-2">
           <div>
             <div className="mb-4 flex items-center gap-2">
-              <span className="h-[5px] w-[5px] bg-[#ff7844]" />
-              <span className="text-[10px] uppercase tracking-[0.08em] text-[#777]">
+              <span className="h-[5px] w-[5px] bg-[#ff7e44]" />
+              <span className="text-[10px] uppercase tracking-[0.08em] text-[#7a7a7a]">
                 Our Values
               </span>
             </div>
 
-            <h2 className="max-w-[420px] text-[32px] font-bold leading-[1.1] tracking-[-1px] md:text-[40px]">
+            <h2 className="max-w-[420px] text-[38px] font-bold leading-[1.05] tracking-[-1.5px] md:text-[50px]">
               We build value, not just buildings
             </h2>
 
-            <p className="mt-6 max-w-[440px] text-[13px] leading-[1.9] text-[#777]">
+            <p className="mt-6 max-w-[440px] text-[13px] leading-[1.9] text-[#7a7a7a]">
               &ldquo;Good design should still feel right in ten years, not just on the day
               it&apos;s finished.&rdquo; It&apos;s a principle we return to on every project,
               from material choice to layout.
@@ -148,7 +148,7 @@ export default function AboutPage() {
 
             <Link
               href="/contact"
-              className="mt-8 inline-flex h-[46px] items-center justify-center bg-[#161616] px-7 text-[11px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-[#ff7844]"
+              className="mt-8 inline-flex h-[46px] items-center justify-center bg-[#191919] px-7 text-[11px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-[#ff7e44]"
             >
               Work With Us
             </Link>
@@ -168,11 +168,11 @@ export default function AboutPage() {
       {/* WHERE WE WORK */}
       <section className="bg-[#f5f5f5] py-[90px]">
         <div className="mddl-container text-center">
-          <h3 className="text-[14px] uppercase tracking-[0.1em] text-[#777]">Where we work</h3>
+          <h3 className="text-[14px] uppercase tracking-[0.1em] text-[#7a7a7a]">Where we work</h3>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
             {regions.map((region) => (
-              <span key={region} className="text-[18px] font-semibold text-[#161616]">
+              <span key={region} className="text-[18px] font-semibold text-[#191919]">
                 {region}
               </span>
             ))}

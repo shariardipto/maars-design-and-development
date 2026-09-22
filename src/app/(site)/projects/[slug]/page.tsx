@@ -5,19 +5,15 @@ import { notFound } from "next/navigation";
 import PageBanner from "@/components/layout/PageBanner";
 import ProjectGallery from "@/components/projects/ProjectGallery";
 import ContactCTA from "@/components/home/ContactCTA";
-import { getProjectBySlug, projects } from "@/lib/projects";
+import { findProject } from "@/lib/server/repository";
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }));
-}
-
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = findProject(slug);
 
   return {
     title: project ? project.title : "Project",
@@ -27,7 +23,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = findProject(slug);
 
   if (!project) {
     notFound();
@@ -54,7 +50,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <h2 className="text-[28px] font-bold leading-[1.15] tracking-[-1px] md:text-[34px]">
                 Project overview
               </h2>
-              <p className="mt-6 text-[14px] leading-[1.9] text-[#777]">{project.description}</p>
+              <p className="mt-6 text-[14px] leading-[1.9] text-[#7a7a7a]">{project.description}</p>
             </div>
 
             <div className="flex flex-col gap-6 border-l border-[#e5e5e5] pl-8">
@@ -62,7 +58,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <div className="text-[10px] uppercase tracking-[0.08em] text-[#999]">
                   Category
                 </div>
-                <div className="mt-1 text-[14px] font-semibold text-[#161616]">
+                <div className="mt-1 text-[14px] font-semibold text-[#191919]">
                   {project.category}
                 </div>
               </div>
@@ -71,14 +67,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <div className="text-[10px] uppercase tracking-[0.08em] text-[#999]">
                   Location
                 </div>
-                <div className="mt-1 text-[14px] font-semibold text-[#161616]">
+                <div className="mt-1 text-[14px] font-semibold text-[#191919]">
                   {project.location}
                 </div>
               </div>
 
               <div>
                 <div className="text-[10px] uppercase tracking-[0.08em] text-[#999]">Year</div>
-                <div className="mt-1 text-[14px] font-semibold text-[#161616]">
+                <div className="mt-1 text-[14px] font-semibold text-[#191919]">
                   {project.year}
                 </div>
               </div>
@@ -92,7 +88,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <div className="mt-16">
             <Link
               href="/projects"
-              className="inline-flex h-[46px] items-center justify-center bg-[#161616] px-7 text-[11px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-[#ff7844]"
+              className="inline-flex h-[46px] items-center justify-center bg-[#191919] px-7 text-[11px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-[#ff7e44]"
             >
               Back to All Projects
             </Link>

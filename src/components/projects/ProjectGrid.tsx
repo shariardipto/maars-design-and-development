@@ -24,8 +24,8 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
             onClick={() => setActive(category)}
             className={`px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors ${
               active === category
-                ? "bg-[#ff7844] text-white"
-                : "bg-[#f5f5f5] text-[#161616] hover:bg-[#ececec]"
+                ? "bg-[#ff7e44] text-white"
+                : "bg-[#f5f5f5] text-[#191919] hover:bg-[#ececec]"
             }`}
           >
             {category}
